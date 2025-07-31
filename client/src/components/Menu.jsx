@@ -154,7 +154,7 @@ const Menu = ({ setMenuOpen, darkMode, setDarkMode, setUploadOpen }) => {
                 </Elements>
             </Link>
             <HR />
-            <Link to='/search' style={{ textDecoration: "none", color: "inherit", width: '100%' }}>
+            <Link to='/setting' style={{ textDecoration: "none", color: "inherit", width: '100%' }}>
                 <Elements>
                     <SettingsRoundedIcon />
                     <NavText>Settins</NavText>
