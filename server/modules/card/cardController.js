@@ -9,6 +9,20 @@ export const getAllPodcastCardsController = async (req, res) => {
   }
 };
 
+export const getRecentPodcastCardsController = async (req, res) => {
+  try {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const recentPodcasts = await card.find({
+      createdAt: { $gte: sevenDaysAgo }
+    }).sort({ createdAt: -1 }); 
+    res.json(recentPodcasts);
+  } catch (error) {
+    console.error('Error fetching recent podcasts:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 export const getPodcastCardByIdController = async (req, res) => {
   try {
     const podcast = await card.findById(req.params.id);

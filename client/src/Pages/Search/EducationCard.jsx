@@ -11,6 +11,9 @@ import { Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions } 
 import '../style/ComedyCard.css';
 import { useDispatch } from 'react-redux';
 import { updatePodcast } from '../../redux/slices/podcastSlice';
+import MoreVertIcon from '@mui/icons-material/MoreVert'; 
+import Menu from '@mui/material/Menu'; 
+import MenuItem from '@mui/material/MenuItem';
 
 const EducationCard = ({ limit ,theme}) => {
   const [podcasts, setPodcasts] = useState([]);
@@ -18,6 +21,9 @@ const EducationCard = ({ limit ,theme}) => {
    const [selectedPodcast, setSelectedPodcast] = useState(null);
    const [openPlayer, setOpenPlayer] = useState(false);
    const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [currentPodcast, setCurrentPodcast] = useState(null);
+  const open = Boolean(anchorEl);
    const [formData, setFormData] = useState({
      title: '',
      description: '',
@@ -28,6 +34,26 @@ const EducationCard = ({ limit ,theme}) => {
      mediaUrl: ''
    });
    const dispatch = useDispatch();
+
+    const handleMenuClick = (event, podcast) => {
+    setAnchorEl(event.currentTarget);
+    setCurrentPodcast(podcast);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setCurrentPodcast(null);
+  };
+
+  const handleEditClick = () => {
+    handleOpenEditDialog(currentPodcast);
+    handleMenuClose();
+  };
+
+  const handleDeleteClick = () => {
+    handleDelete(currentPodcast._id);
+    handleMenuClose();
+  };
  
    const getallpodcasts = async () => {
      setLoading(true);
@@ -143,37 +169,32 @@ const EducationCard = ({ limit ,theme}) => {
           {podcasts.map((podcast) => (
             <div className="card" key={podcast._id}>
               <div className="delete-icon-container">
-
-                <IconButton
-                  onClick={() => handleOpenEditDialog(podcast)}
-                  sx={{
-                    color: 'white',
-                    padding: '4px',
-                    '&:hover': {
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)'
-                    }
-                  }}
-                >
-                  <ModeEditOutlineRoundedIcon fontSize="small" />
+                  <IconButton aria-label="more" aria-controls={open ? 'long-menu' : undefined}
+                  aria-expanded={open ? 'true' : undefined} aria-haspopup="true" onClick={(e) => handleMenuClick(e, podcast)}
+                  sx={{ color: 'white', padding: '4px', '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' } }} >
+                  <MoreVertIcon />
                 </IconButton>
-
-                {/* Delete Button */}
-                <IconButton
-                  onClick={() => handleDelete(podcast._id)}
-                  sx={{
-                    color: 'white',
-                    padding: '4px',
-                    '&:hover': {
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)'
-                    }
-                  }}
-                >
-                  <DeleteRoundedIcon fontSize="small" />
-                </IconButton>
+                <Menu id="long-menu" anchorEl={anchorEl} open={open} onClose={handleMenuClose}
+                  PaperProps={{ style: { maxHeight: 48 * 4.5, width: '20ch', }, }} >
+                  <MenuItem onClick={handleEditClick}>
+                    <ModeEditOutlineRoundedIcon fontSize="small" sx={{ mr: 1 }} />
+                    Edit
+                  </MenuItem>
+                  <MenuItem onClick={handleDeleteClick}>
+                    <DeleteRoundedIcon fontSize="small" sx={{ mr: 1 }} />
+                    Delete
+                  </MenuItem>
+                </Menu>
               </div>
 
               <div style={{ width: "280px" }}>
                 <div className="top">
+                  <div classname="favourite">
+                     <IconButton className="favourite">
+                      <FavoriteIcon style={{width:"16px" , height:"16px"}}/>
+                     </IconButton>
+                    
+                  </div>
                   <img className="card-image" src={podcast.image} alt={podcast.title} />
                 </div>
                 <div className="card-information">

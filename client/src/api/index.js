@@ -3,7 +3,7 @@ import jwt_decode from 'jwt-decode';
 import { Provider } from 'react-redux';
 
 //https://podstream.onrender.com/api
-const API = axios.create({ baseURL: `http://localhost:3001` }); 
+const API = axios.create({ baseURL: `http://localhost:4000` }); 
 
 //https://podstream.onrender.com/api
 //auth

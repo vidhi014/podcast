@@ -8,6 +8,8 @@ import connectDB from './db.js';
 
 import cardRoute from "./modules/card/cardRoute.js";
 import userRoutes from './modules/authentication/userroute.js'
+import favouriteRoute from "./modules/favourite/favouriteRoute.js"
+import playlistRoute from './modules/playlist/playlistRoute.js';
 
 const app = express();
 dotenv.config();
@@ -20,7 +22,8 @@ app.use(errorMiddleware);
 
 app.use('/api', userRoutes);
 app.use('/api/card', cardRoute);
-// app.use('/api/user', cardRoute);
+app.use('/api/favourite', favouriteRoute);
+app.use('/api/playlist', playlistRoute);
 
 connectDB();
 

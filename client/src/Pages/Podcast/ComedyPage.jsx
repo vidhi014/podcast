@@ -71,7 +71,7 @@ const ComedyPage = () => {
           <CircularProgress />
         </Box>
       ) : (
-        <Box sx={{ padding: "20px", height: "500px", maxHeight: "1200px", overflowY: "auto" }}>  
+        <Box sx={{ padding: "20px"}}>  
           <ComedyCard podcasts={podcasts} loading={loading} />
         </Box>
       )}

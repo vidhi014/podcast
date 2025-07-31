@@ -11,36 +11,115 @@ import { Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions } 
 import '../style/ComedyCard.css';
 import { useDispatch } from 'react-redux';
 import { updatePodcast } from '../../redux/slices/podcastSlice';
+import MoreVertIcon from '@mui/icons-material/MoreVert'; 
+import Menu from '@mui/material/Menu'; 
+import MenuItem from '@mui/material/MenuItem';
 
 const MostPopularCard = ({ limit ,theme}) => {
   const [podcasts, setPodcasts] = useState([]);
-   const [loading, setLoading] = useState(false);
-   const [selectedPodcast, setSelectedPodcast] = useState(null);
-   const [openPlayer, setOpenPlayer] = useState(false);
-   const [openEditDialog, setOpenEditDialog] = useState(false);
-   const [formData, setFormData] = useState({
-     title: '',
-     description: '',
-     image: '',
-     creatorName: '',
-     mediaType: 'video',
-     category: 'Most Popular',
-     mediaUrl: ''
-   });
-   const dispatch = useDispatch();
- 
-   const getallpodcasts = async () => {
-     setLoading(true);
-     try {
-       const res = await fetch(`http://localhost:4000/api/card/category/filter?category=Most Popular`);
-       const data = await res.json();
-       setPodcasts(limit ? data.slice(0, limit) : data);
-     } catch (error) {
-       console.error("Error fetching Most Popular podcasts:", error);
-     }
-     setLoading(false);
-   };
- 
+  const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedPodcast, setSelectedPodcast] = useState(null);
+  const [openPlayer, setOpenPlayer] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [currentPodcast, setCurrentPodcast] = useState(null);
+    const open = Boolean(anchorEl);
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    image: '',
+    creatorName: '',
+    mediaType: 'video',
+    category: 'Most Popular',
+    mediaUrl: ''
+  });
+  const dispatch = useDispatch();
+
+   const handleMenuClick = (event, podcast) => {
+    setAnchorEl(event.currentTarget);
+    setCurrentPodcast(podcast);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setCurrentPodcast(null);
+  };
+
+  const handleEditClick = () => {
+    handleOpenEditDialog(currentPodcast);
+    handleMenuClose();
+  };
+
+  const handleDeleteClick = () => {
+    handleDelete(currentPodcast._id);
+    handleMenuClose();
+  };
+
+  useEffect(() => {
+    getallpodcasts();
+    fetchFavorites();
+  }, [limit]);
+
+  const getallpodcasts = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`http://localhost:4000/api/card/category/filter?category=Most Popular`);
+      const data = await res.json();
+      setPodcasts(limit ? data.slice(0, limit) : data);
+    } catch (error) {
+      console.error("Error fetching Most Popular podcasts:", error);
+    }
+    setLoading(false);
+  };
+
+  const fetchFavorites = async () => {
+    try {
+      const res = await fetch('http://localhost:4000/api/favourite', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setFavorites(data.map(fav => fav._id)); 
+      }
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
+    }
+  };
+
+  const toggleFavorite = async (podcastId) => {
+    try {
+      const isFavorite = favorites.includes(podcastId);
+
+      const endpoint = isFavorite
+        ? `http://localhost:4000/api/favourite/${podcastId}`
+        : 'http://localhost:4000/api/favourite';
+
+      const method = isFavorite ? 'DELETE' : 'POST';
+
+      const response = await fetch(endpoint, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: !isFavorite ? JSON.stringify({ podcastId }) : undefined
+      });
+
+      if (response.ok) {
+        // Refresh favorites after toggling
+        await fetchFavorites();
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to update favorite:', errorData.message);
+      }
+    } catch (error) {
+      console.error('Error updating favorite:', error);
+    }
+  };
+
    const handleDelete = async (podcastId) => {
      try {
        const response = await fetch(`http://localhost:4000/api/card/${podcastId}`, {
@@ -143,39 +222,35 @@ const MostPopularCard = ({ limit ,theme}) => {
           {podcasts.map((podcast) => (
             <div className="card" key={podcast._id}>
               <div className="delete-icon-container">
-                
-                <IconButton 
-                  onClick={() => handleOpenEditDialog(podcast)}
-                  sx={{ 
-                    color: 'white',
-                    padding: '4px',
-                    '&:hover': {
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)'
-                    }
-                  }}
-                >
-                  <ModeEditOutlineRoundedIcon fontSize="small" />
+                 <IconButton aria-label="more" aria-controls={open ? 'long-menu' : undefined}
+                  aria-expanded={open ? 'true' : undefined} aria-haspopup="true" onClick={(e) => handleMenuClick(e, podcast)}
+                  sx={{ color: 'white', padding: '4px', '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' } }} >
+                  <MoreVertIcon />
                 </IconButton>
-                
-                {/* Delete Button */}
-                <IconButton 
-                  onClick={() => handleDelete(podcast._id)}
-                  sx={{ 
-                    color: 'white',
-                    padding: '4px',
-                    '&:hover': {
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)'
-                    }
-                  }}
-                >
-                  <DeleteRoundedIcon fontSize="small" />
-                </IconButton>
+                <Menu id="long-menu" anchorEl={anchorEl} open={open} onClose={handleMenuClose}
+                  PaperProps={{ style: { maxHeight: 48 * 4.5, width: '20ch', }, }} >
+                  <MenuItem onClick={handleEditClick}>
+                    <ModeEditOutlineRoundedIcon fontSize="small" sx={{ mr: 1 }} />
+                    Edit
+                  </MenuItem>
+                  <MenuItem onClick={handleDeleteClick}>
+                    <DeleteRoundedIcon fontSize="small" sx={{ mr: 1 }} />
+                    Delete
+                  </MenuItem>
+                </Menu>
               </div>
 
               <div style={{ width: "280px" }}>
                 <div className="top">
+                  <div className="favourite">
+                    <IconButton className="favourite" onClick={() => toggleFavorite(podcast._id)}
+                      sx={{ '&:hover': { backgroundColor: 'transparent' } }} >
+                      <FavoriteIcon sx={{ width: "16px", height: "16px", color: favorites.includes(podcast._id) ? 'red' : 'white', fill: favorites.includes(podcast._id) ? 'red' : 'none' }} />
+                    </IconButton>
+                  </div>
                   <img className="card-image" src={podcast.image} alt={podcast.title} />
                 </div>
+
                 <div className="card-information">
                   <div className="main-info">
                     <div className="title">{podcast.title}</div>
@@ -203,6 +278,7 @@ const MostPopularCard = ({ limit ,theme}) => {
           ))}
         </div>
       )}
+      
 
  <Dialog open={openEditDialog} onClose={handleCloseEditDialog} fullWidth maxWidth="sm">
         <DialogTitle sx={{ backgroundColor: '#1C1E27', color: 'white', padding: '16px 24px', fontSize: '1.2rem' }}>

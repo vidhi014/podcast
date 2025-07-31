@@ -16,6 +16,11 @@ import EducationPage from '../src/Pages/Podcast/EducationPage.jsx';
 import ComedyPage from '../src/Pages/Podcast/ComedyPage.jsx';
 import HealthPage from "../src/Pages/Podcast/HealthPage.jsx";
 import MostPopularPage from "./Pages/Podcast/MostPopularPage.jsx";
+import Search from '../src/Pages/Search.jsx';
+import DisplayPodcasts from '../src/Pages/DisplayPodcast.jsx';
+import Favourites from '../src/Pages/Favourites.jsx';
+import Recent from "../src/components/Recent.jsx"
+import Playlist from "./Pages/Playlist.jsx"
 
 const Frame = styled.div`
   display: flex;
@@ -85,6 +90,11 @@ function App() {
               <Route path='/' exact element={<Dashboard setSignInOpen={setSignInOpen}/>} />
               <Route path='/' exact element={<Dashboard setSignInOpen={setSignInOpen}/>} />
               <Route path="/signin" element={<Signin />} />
+              <Route path='/search' exact element={<Search />} />
+              <Route path='/favourites' exact element={<Favourites />} />
+              <Route path='/recent' exact element={ <Recent/> } />
+              <Route path='/playlist' exact element={ <Playlist/> } />
+              <Route path='/showpodcasts/:type' exact element={<DisplayPodcasts/>} />
               <Route path="/showpodcasts/business" element={<BusinessPage />} />
               <Route path="/showpodcasts/education" element={<EducationPage />} />
               <Route path="/showpodcasts/comedy" element={<ComedyPage />} />

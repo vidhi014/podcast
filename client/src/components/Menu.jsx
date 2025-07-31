@@ -125,7 +125,7 @@ const Menu = ({ setMenuOpen, darkMode, setDarkMode, setUploadOpen }) => {
                 </Elements>
             </Link>
 
-            <Link to='/search' style={{ textDecoration: "none", color: "inherit", width: '100%' }}>
+            <Link to='/' style={{ textDecoration: "none", color: "inherit", width: '100%' }}>
                 <Elements>
                     <LayersRoundedIcon />
                     <NavText>Category</NavText>
@@ -133,21 +133,21 @@ const Menu = ({ setMenuOpen, darkMode, setDarkMode, setUploadOpen }) => {
             </Link>
 
             <HR></HR>
-            <Link to='/search' style={{ textDecoration: "none", color: "inherit", width: '100%' }}>
+            <Link to='/recent' style={{ textDecoration: "none", color: "inherit", width: '100%' }}>
                 <Elements>
                     <ScheduleRoundedIcon />
                     <NavText>recent</NavText>
                 </Elements>
             </Link>
 
-            <Link to='/search' style={{ textDecoration: "none", color: "inherit", width: '100%' }}>
+            <Link to='/playlist' style={{ textDecoration: "none", color: "inherit", width: '100%' }}>
                 <Elements>
                     <LayersRoundedIcon />
                     <NavText>Playlist</NavText>
                 </Elements>
             </Link>
 
-            <Link to='/search' style={{ textDecoration: "none", color: "inherit", width: '100%' }}>
+            <Link to='/favourites' style={{ textDecoration: "none", color: "inherit", width: '100%' }}>
                 <Elements>
                     <FavoriteRoundedIcon />
                     <NavText>Favourites</NavText>

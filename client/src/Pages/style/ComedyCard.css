@@ -91,6 +91,20 @@
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
 }
 
+.favourite {
+  color: white !important;
+  top: 8px;
+  right: 6px;
+  padding: 6px !important;
+  border-radius: 50%;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  position: absolute !important;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 0 16px 6px #222423 !important;
+  background: rgba(255, 255, 255, 0.1); /* You can change this to your theme color */
+}
 
 .card-information {
     display: flex;
@@ -159,11 +173,11 @@
     width: max-content;
 }
 
-.wrapper {
+/* .wrapper {
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
-}
+} */
 
 .modal-container {
     position: absolute;
